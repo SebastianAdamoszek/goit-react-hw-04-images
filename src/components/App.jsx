@@ -104,7 +104,12 @@ const App = () => {
         <>
          
           <Button onClick={loadMoreImages} disabled={false} />
-          <p className="message">{`Downloaded ${images.length} "${largedSearchTerm}" images from ${totalImages} available.`}</p>
+
+          <p className="message">
+            {`Downloaded ${images.length} "${largedSearchTerm}" images from ${totalImages} available.`}
+            </p>
+            <span className='border'></span>
+
         </>
       )}
      
