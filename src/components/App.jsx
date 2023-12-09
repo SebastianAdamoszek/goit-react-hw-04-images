@@ -5,7 +5,7 @@ import ImageGallery from './ImageGallery/ImageGallery';
 import Button from './Button/Button';
 import Loader from './Loader/Loader';
 import Modal from './Modal/Modal';
-import Notiflix from 'notiflix';
+import { Notify } from 'notiflix';
 
 
 const App = () => {
@@ -24,7 +24,7 @@ const App = () => {
 
     if (searchTerm.trim() === '') {
       setIsLoading(false);
-      Notiflix.info('Enter a name in the search box');
+      Notify.info('Enter a name in the search box');
       return;
     }
     try {
@@ -38,17 +38,17 @@ const App = () => {
 
         if (data.totalHits === 0) {
           setImages([]);
-          Notiflix.failure(
+          Notify.failure(
             `Sorry, There are no images with the name "${searchTerm.toUpperCase()}. Change search!" `
           );
         } else if (data.totalHits <= 12) {
-          Notiflix.success(
+          Notify.success(
             `We have found ${
               data.totalHits
             } images for "${searchTerm.toUpperCase()}" `
           );
         } else {
-          Notiflix.success(
+          Notify.success(
             `We have found ${
               data.totalHits
             } images for "${searchTerm.toUpperCase()}". You can LOAD MORE!`
@@ -56,7 +56,7 @@ const App = () => {
         }
       }
     } catch (error) {
-      Notiflix.failure('Oops! Something went wrong while fetching images.');
+      Notify.failure('Oops! Something went wrong while fetching images.');
       console.log('Error fetching images:', error);
     } finally {
       setIsLoading(false);
@@ -74,7 +74,7 @@ const App = () => {
         setPage(nextPage);
       }
     } catch (error) {
-      Notiflix.failure('Oops! Something went wrong while fetching images.');
+      Notify.failure('Oops! Something went wrong while fetching images.');
       console.log('Error fetching more images:', error);
     } finally {
       setIsLoading(false);
