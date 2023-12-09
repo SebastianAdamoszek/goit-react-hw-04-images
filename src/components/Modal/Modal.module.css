@@ -1,17 +1,35 @@
 .Overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background-color: rgba(0, 0, 0, 0.8);
-    z-index: 1200;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(0, 0, 0, 0.8);
+  z-index: 1200;
+}
+
+.Modal {
+  max-width: calc(100vw - 48px);
+  max-height: calc(100vh - 24px);
+  border: 10px double white;
+  border-radius: 25px;
+  animation: increase 1s ease-in-out;
+}
+
+.ModalImage {
+  border-radius: 17px;
+  margin: auto;
+  padding: 5px;
+  animation: increase 1s ease-in-out;
+}
+@keyframes increase {
+  0% {
+    transform: scale(0);
   }
-  
-  .Modal {
-    max-width: calc(100vw - 48px);
-    max-height: calc(100vh - 24px);
+  100% {
+    transform: scale(1);
   }
+}

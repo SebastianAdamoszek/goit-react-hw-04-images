@@ -1,12 +1,11 @@
-.Button__box {
+.ButtonBox {
   display: flex;
   justify-content: center;
   align-items: center;
-  margin: 20px 0;
 }
 
 .Button {
-  margin: 0 auto;
+  margin: 20px auto;
     padding: 8px 16px;
     border-radius: 2px;
     background-color: #3f51b5;

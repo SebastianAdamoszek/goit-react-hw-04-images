@@ -1,90 +1,117 @@
-import React, { useState, useEffect } from 'react';
-import Searchbar from './Searchbar/Searchbar.js';
-import ImageGallery from './ImageGallery/ImageGallery.js';
-import Loader from './Loader/Loader.js';
-import Button from './Button/Button.js';
-import Modal from './Modal/Modal.js';
+import { useState } from 'react';
+import fetchImageGallery from '../Api/ImagesApi';
+import Searchbar from './Searchbar/Searchbar';
+import ImageGallery from './ImageGallery/ImageGallery';
+import Notify from 'notiflix';
+import Button from './Button/Button';
+import Loader from './Loader/Loader';
+import Modal from './Modal/Modal';
 
 const App = () => {
-  const [query, setQuery] = useState('');
   const [images, setImages] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [selectedImage, setSelectedImage] = useState(null);
   const [page, setPage] = useState(1);
-  const perPage = 12;
+  const [searchTerm, setSearchTerm] = useState('');
+  const [totalImages, setTotalImages] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+  const [selectedImage, setSelectedImage] = useState('');
 
-  useEffect(() => {
-    if (query.trim().length > 0) {
-      fetchData();
+  const handleSearch = async searchTerm => {
+    setIsLoading(true);
+    setImages([]);
+    setPage(1);
+
+    if (searchTerm.trim() === '') {
+      setIsLoading(false);
+      Notify.info('Please enter a term to search something');
+      return;
     }
-  }, [query, page,]);
-
-  const fetchData = async () => {
-    setLoading(true);
-
     try {
-      const API_KEY = '39753662-13b05df2e1b75c8b2e28e56d6';
-      const response = await fetch(
-        `https://pixabay.com/api/?q=${query}&page=${page}&key=${API_KEY}&image_type=photo&orientation=horizontal&per_page=${perPage}`
-      );
+      const data = await fetchImageGallery(searchTerm, page);
 
-      if (!response.ok) {
-        throw new Error('Error fetching images');
+      if (data.hits) {
+        setImages(data.hits);
+        setSearchTerm(searchTerm);
+        setPage(1);
+        setTotalImages(data.totalHits);
+
+        if (data.totalHits === 0) {
+          setImages([]);
+          Notify.failure(
+            `Sorry, There's no images for "${searchTerm.toUpperCase()}. Please try again!" `
+          );
+        } else if (data.totalHits <= 12) {
+          Notify.success(
+            `We have found ${
+              data.totalHits
+            } images for "${searchTerm.toUpperCase()}" `
+          );
+        } else {
+          Notify.success(
+            `We have found ${
+              data.totalHits
+            } images for "${searchTerm.toUpperCase()}". You can LOAD MORE!`
+          );
+        }
       }
-
-      const data = await response.json();
-      const formattedImages = data.hits.map((image) => ({
-        id: image.id,
-        webformatURL: image.webformatURL.replace(/^http:/, 'https:'),
-        largeImageURL: image.largeImageURL.replace(/^http:/, 'https:'),
-        altText: image.altText,
-      }));
-
-      setImages((prevImages) => [...prevImages, ...formattedImages]);
     } catch (error) {
-      console.error('Error fetching images', error);
+      Notify.failure('Oops! Something went wrong while fetching images.');
+      console.log('Error fetching images:', error);
     } finally {
-      setLoading(false);
+      setIsLoading(false);
     }
   };
 
-  const handleSearch = (newQuery) => {
-    const trimmedQuery = newQuery.trim();
+  const loadMoreImages = async () => {
+    setIsLoading(true);
+    try {
+      const nextPage = page + 1;
+      const data = await fetchImageGallery(searchTerm, nextPage);
 
-    if (trimmedQuery.length > 0 && trimmedQuery !== query) {
-      setQuery(trimmedQuery);
-      setPage(1);
-      setImages([]);
-      setLoading(true);
+      if (data.hits) {
+        setImages(prevImages => [...prevImages, ...data.hits]);
+        setPage(nextPage);
+      }
+    } catch (error) {
+      Notify.failure('Oops! Something went wrong while fetching images.');
+      console.log('Error fetching more images:', error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  const handleLoadMore = () => {
-    if (images.length > 0 && !loading) {
-      setPage((prevPage) => prevPage + 1);
-    }
+  const handleImageClick = imageUrl => {
+    setShowModal(true);
+    setSelectedImage(imageUrl);
+  };
+  const handleModalClose = () => {
+    setShowModal(false);
+    setSelectedImage('');
   };
 
-  const handleImageClick = (selectedImage) => {
-    setSelectedImage(selectedImage);
-  };
+  const hasMoreImages = images.length < totalImages;
 
-  const closeModal = () => {
-    setSelectedImage(null);
-  };
+  const largedSearchTerm = searchTerm.toUpperCase();
 
   return (
-    <div>
-      <Searchbar onSubmit={handleSearch} />
+    <div className="App">
+      <Searchbar onSubmit={handleSearch} setPage={setPage} />
       <ImageGallery images={images} onImageClick={handleImageClick} />
-      <Loader isLoading={loading} />
-      <Button onClick={handleLoadMore} hasMore={images.length > 0} />
+      {isLoading && <Loader />}
 
-      {selectedImage && (
+      {hasMoreImages && (
+        <>
+         
+          <Button onClick={loadMoreImages} disabled={false} />
+          <p className="message">{`Downloaded ${images.length} "${largedSearchTerm}" images from ${totalImages} available.`}</p>
+        </>
+      )}
+     
+      {showModal && (
         <Modal
-          largeImageURL={selectedImage.largeImageURL}
-          altText={selectedImage.altText}
-          onClose={closeModal}
+          imageUrl={selectedImage}
+          onModalClose={handleModalClose}
+          showModal={showModal}
         />
       )}
     </div>
