@@ -28,6 +28,15 @@ img {
   display: block;
   max-width: 100%;
   height: auto;
+  animation: increase 1.5s ease-in-out;
+}
+@keyframes increase {
+  0% {
+    transform: scale(0);
+  }
+  100% {
+    transform: scale(1);
+  }
 }
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',

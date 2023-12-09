@@ -2,10 +2,11 @@ import { useState } from 'react';
 import fetchImageGallery from '../Api/ImagesApi';
 import Searchbar from './Searchbar/Searchbar';
 import ImageGallery from './ImageGallery/ImageGallery';
-import Notify from 'notiflix';
 import Button from './Button/Button';
 import Loader from './Loader/Loader';
 import Modal from './Modal/Modal';
+import Notiflix from 'notiflix';
+
 
 const App = () => {
   const [images, setImages] = useState([]);
@@ -23,7 +24,7 @@ const App = () => {
 
     if (searchTerm.trim() === '') {
       setIsLoading(false);
-      Notify.info('Please enter a term to search something');
+      Notiflix.info('Enter a name in the search box');
       return;
     }
     try {
@@ -37,17 +38,17 @@ const App = () => {
 
         if (data.totalHits === 0) {
           setImages([]);
-          Notify.failure(
-            `Sorry, There's no images for "${searchTerm.toUpperCase()}. Please try again!" `
+          Notiflix.failure(
+            `Sorry, There are no images with the name "${searchTerm.toUpperCase()}. Change search!" `
           );
         } else if (data.totalHits <= 12) {
-          Notify.success(
+          Notiflix.success(
             `We have found ${
               data.totalHits
             } images for "${searchTerm.toUpperCase()}" `
           );
         } else {
-          Notify.success(
+          Notiflix.success(
             `We have found ${
               data.totalHits
             } images for "${searchTerm.toUpperCase()}". You can LOAD MORE!`
@@ -55,7 +56,7 @@ const App = () => {
         }
       }
     } catch (error) {
-      Notify.failure('Oops! Something went wrong while fetching images.');
+      Notiflix.failure('Oops! Something went wrong while fetching images.');
       console.log('Error fetching images:', error);
     } finally {
       setIsLoading(false);
@@ -73,7 +74,7 @@ const App = () => {
         setPage(nextPage);
       }
     } catch (error) {
-      Notify.failure('Oops! Something went wrong while fetching images.');
+      Notiflix.failure('Oops! Something went wrong while fetching images.');
       console.log('Error fetching more images:', error);
     } finally {
       setIsLoading(false);

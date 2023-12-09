@@ -23,7 +23,6 @@
   border-radius: 17px;
   margin: auto;
   padding: 5px;
-  animation: increase 1s ease-in-out;
 }
 @keyframes increase {
   0% {
