@@ -16,19 +16,21 @@
   max-height: calc(100vh - 24px);
   border: 10px double white;
   border-radius: 25px;
+  overflow: hidden;
+
   animation: increase 1s ease-in-out;
 }
 
+    @keyframes increase {
+      0% {
+        transform: scale(0);
+      }
+      100% {
+        transform: scale(1);
+      }
+    }
+
 .ModalImage {
   border-radius: 17px;
-  margin: auto;
   padding: 5px;
-}
-@keyframes increase {
-  0% {
-    transform: scale(0);
-  }
-  100% {
-    transform: scale(1);
-  }
 }

@@ -28,7 +28,7 @@ img {
   display: block;
   max-width: 100%;
   height: auto;
-  animation: increase 1.5s ease-in-out;
+  animation: increase 1s ease-in-out;
 }
 @keyframes increase {
   0% {
